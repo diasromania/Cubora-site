@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publica Server - Cubora</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <div class="nav-logo">
+            <div class="logo-mark">C</div>
+            <span class="logo-text">CUBORA</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Acasa</a>
+            <a href="servers.html">Servere</a>
+            <a href="publish.html" class="active">Publica Server</a>
+        </div>
+        <a href="index.html#download" class="btn-download-nav">Descarca</a>
+    </div>
+</nav>
+
+<div class="page-hero small">
+    <div class="container">
+        <h1>Publica <span class="highlight">Serverul Tau</span></h1>
+        <p>Completeaza formularul de mai jos. Cererea ta va fi revizuita de echipa Cubora.</p>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        <div class="publish-layout">
+            <div class="publish-form-wrap">
+                <div class="publish-form" id="form-wrap">
+                    <div class="field">
+                        <label>NUMELE SERVERULUI *</label>
+                        <input type="text" id="f-name" placeholder="Ex: MattuPolis RP">
+                    </div>
+                    <div class="field-row">
+                        <div class="field">
+                            <label>IP SERVER *</label>
+                            <input type="text" id="f-ip" placeholder="play.server.ro">
+                        </div>
+                        <div class="field" style="max-width:120px">
+                            <label>PORT</label>
+                            <input type="number" id="f-port" value="25565">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>DESCRIERE *</label>
+                        <textarea id="f-desc" placeholder="Descrie serverul tau pe scurt..."></textarea>
+                    </div>
+                    <div class="field">
+                        <label>LINK MODPACK (ZIP direct) *</label>
+                        <input type="text" id="f-modpack" placeholder="https://... link direct .zip">
+                        <span class="field-hint">Link direct catre arhiva ZIP cu modurile serverului (Forge 1.16.5)</span>
+                    </div>
+                    <div class="field">
+                        <label>BANNER URL (optional)</label>
+                        <input type="text" id="f-banner" placeholder="https://... .png / .jpg">
+                    </div>
+                    <div class="field">
+                        <label>EMAIL CONTACT *</label>
+                        <input type="email" id="f-email" placeholder="contact@server.ro">
+                        <span class="field-hint">Nu va fi afisat public. Folosit doar pentru comunicare.</span>
+                    </div>
+                    <div id="f-err" class="msg-err"></div>
+                    <div id="f-ok" class="msg-ok"></div>
+                    <button class="btn-primary-big w100" onclick="submitForm()">TRIMITE CEREREA</button>
+                </div>
+            </div>
+
+            <div class="publish-info">
+                <h3>Cum functioneaza?</h3>
+                <div class="info-step">
+                    <div class="info-num">1</div>
+                    <p>Completezi formularul cu datele serverului tau.</p>
+                </div>
+                <div class="info-step">
+                    <div class="info-num">2</div>
+                    <p>Echipa Cubora revizuieste cererea in maxim 48h.</p>
+                </div>
+                <div class="info-step">
+                    <div class="info-num">3</div>
+                    <p>Dupa aprobare, serverul apare automat in aplicatie pentru toti utilizatorii.</p>
+                </div>
+
+                <h3 style="margin-top:24px">Cerinte</h3>
+                <ul class="req-list">
+                    <li>&#9679; Server Minecraft Java 1.16.5</li>
+                    <li>&#9679; Forge 1.16.5 pe server</li>
+                    <li>&#9679; Modpack disponibil ca ZIP public</li>
+                    <li>&#9679; Server activ (nu in testare)</li>
+                    <li>&#9679; Continut RP (RolePlay)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-inner">
+            <div class="footer-logo">
+                <div class="logo-mark sm">C</div>
+                <span class="logo-text sm">CUBORA</span>
+            </div>
+            <div class="footer-links">
+                <a href="index.html">Acasa</a>
+                <a href="servers.html">Servere</a>
+                <a href="publish.html">Publica Server</a>
+            </div>
+            <div class="footer-note">&copy; 2026 Cubora. Dezvoltat de D.I.A.S.</div>
+        </div>
+    </div>
+</footer>
+
+<script>
+async function submitForm() {
+    const name    = document.getElementById('f-name').value.trim();
+    const ip      = document.getElementById('f-ip').value.trim();
+    const port    = document.getElementById('f-port').value || '25565';
+    const desc    = document.getElementById('f-desc').value.trim();
+    const modpack = document.getElementById('f-modpack').value.trim();
+    const banner  = document.getElementById('f-banner').value.trim();
+    const email   = document.getElementById('f-email').value.trim();
+    const err = document.getElementById('f-err');
+    const ok  = document.getElementById('f-ok');
+
+    err.textContent = ''; ok.textContent = '';
+
+    if (!name || !ip || !desc || !modpack || !email) {
+        err.textContent = 'Completeaza toate campurile obligatorii (*)';
+        return;
+    }
+
+    const btn = document.querySelector('.btn-primary-big');
+    btn.textContent = 'SE TRIMITE...';
+    btn.disabled = true;
+
+    try {
+        // Trimite catre un Google Form sau webhook
+        // Datele ajung la owner prin email automat
+        const formData = new FormData();
+        const FORM_ID = 'YOUR_GOOGLE_FORM_ID'; // de inlocuit cu Form ID real
+        formData.append('entry.NAME', name);
+        formData.append('entry.IP', ip + ':' + port);
+        formData.append('entry.DESC', desc);
+        formData.append('entry.MODPACK', modpack);
+        formData.append('entry.BANNER', banner);
+        formData.append('entry.EMAIL', email);
+
+        // Fallback: deschide email direct
+        const subject = encodeURIComponent(`[Cubora] Cerere server: ${name}`);
+        const body = encodeURIComponent(
+            `Nume: ${name}\nIP: ${ip}:${port}\nDescriere: ${desc}\nModpack: ${modpack}\nBanner: ${banner}\nEmail: ${email}`
+        );
+        window.location.href = `mailto:dias.contact.ro@gmail.com?subject=${subject}&body=${body}`;
+        
+        ok.textContent = 'Se deschide clientul de email. Trimite mesajul pentru a finaliza cererea.';
+    } catch(e) {
+        err.textContent = 'Eroare: ' + e.message;
+    }
+
+    btn.textContent = 'TRIMITE CEREREA';
+    btn.disabled = false;
+}
+</script>
+</body>
+</html>
