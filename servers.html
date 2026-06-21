@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servere - Cubora</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <div class="nav-logo">
+            <div class="logo-mark">C</div>
+            <span class="logo-text">CUBORA</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Acasa</a>
+            <a href="servers.html" class="active">Servere</a>
+            <a href="publish.html">Publica Server</a>
+        </div>
+        <a href="index.html#download" class="btn-download-nav">Descarca</a>
+    </div>
+</nav>
+
+<div class="page-hero small">
+    <div class="container">
+        <h1>Servere <span class="highlight">Cubora</span></h1>
+        <p>Alege un server si conecteaza-te cu un click din aplicatie.</p>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        <div class="servers-bar">
+            <input type="text" id="search" placeholder="Cauta server..." class="search-input" oninput="filterServers()">
+            <a href="publish.html" class="btn-primary">+ Publica serverul tau</a>
+        </div>
+        <div class="servers-grid" id="servers-grid">
+            <div class="loading-msg">Se incarca serverele...</div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-inner">
+            <div class="footer-logo">
+                <div class="logo-mark sm">C</div>
+                <span class="logo-text sm">CUBORA</span>
+            </div>
+            <div class="footer-links">
+                <a href="index.html">Acasa</a>
+                <a href="servers.html">Servere</a>
+                <a href="publish.html">Publica Server</a>
+            </div>
+            <div class="footer-note">&copy; 2026 Cubora. Dezvoltat de D.I.A.S.</div>
+        </div>
+    </div>
+</footer>
+
+<script>
+let allServers = [];
+
+fetch('https://raw.githubusercontent.com/diasromania/Cubora/main/servers.json?t=' + Date.now())
+    .then(r => r.json())
+    .then(servers => {
+        allServers = servers;
+        renderServers(servers);
+    })
+    .catch(() => {
+        document.getElementById('servers-grid').innerHTML =
+            '<div class="loading-msg">Nu s-au putut incarca serverele. Incearca mai tarziu.</div>';
+    });
+
+function renderServers(servers) {
+    const grid = document.getElementById('servers-grid');
+    if (servers.length === 0) {
+        grid.innerHTML = '<div class="loading-msg">Niciun server gasit. <a href="publish.html">Fii primul!</a></div>';
+        return;
+    }
+    grid.innerHTML = servers.map(s => `
+        <div class="sv-card">
+            <div class="sv-banner">
+                ${s.banner ? `<img src="${s.banner}" alt="${s.name}" onerror="this.parentElement.innerHTML='&#9671;'">` : '&#9671;'}
+            </div>
+            <div class="sv-body">
+                <div class="sv-name">${esc(s.name)}</div>
+                <div class="sv-desc">${esc(s.description || 'Nicio descriere.')}</div>
+                <div class="sv-foot">
+                    <span class="sv-ip">${esc(s.ip)}:${s.port || 25565}</span>
+                    <span class="sv-players">&#9679; ${s.players || 0} online</span>
+                </div>
+                <div class="sv-actions">
+                    <span class="sv-tag">Forge 1.16.5</span>
+                    <span class="sv-tag">RP</span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function filterServers() {
+    const q = document.getElementById('search').value.toLowerCase();
+    renderServers(allServers.filter(s =>
+        s.name.toLowerCase().includes(q) ||
+        (s.description||'').toLowerCase().includes(q)
+    ));
+}
+
+function esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>
